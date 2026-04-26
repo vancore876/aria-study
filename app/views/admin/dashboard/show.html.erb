@@ -1,0 +1,144 @@
+<div class="admin-dashboard">
+  <h1>Admin Dashboard</h1>
+  
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <h2>Total Users</h2>
+      <p class="number"><%= @total_users %></p>
+      <p class="trend"><%= percentage_change(User.count(30.days.ago..Time.now), @total_users) %></p>
+    </div>
+    
+    <div class="metric-card">
+      <h2>Active Subscriptions</h2>
+      <p class="number"><%= @active_users %></p>
+      <p class="trend"><%= percentage_change(User.where(subscription_status: 'active').count(30.days.ago..Time.now), @active_users) %></p>
+    </div>
+    
+    <div class="metric-card">
+      <h2>Pending MFA</h2>
+      <p class="number"><%= @pending_mfa %></p>
+      <p class="trend"><%= (@pending_mfa / @total_users.to_f * 100).round(1) %>% of users</p>
+    </div>
+    
+    <div class="metric-card">
+      <h2>Monthly Revenue</h2>
+      <p class="number">$<%= (@revenue_month / 100.0).round(2) %></p>
+      <p class="trend"><%= percentage_change(Payment.where(created_at: 30.days.ago.beginning_of_month..30.days.ago.end_of_month).sum(:amount), @revenue_month) %></p>
+    </div>
+  </div>
+
+  <div class="charts-section">
+    <h2>User Growth (30 Days)</h2>
+    <canvas id="userGrowthChart"></canvas>
+    
+    <h2>Subscription Trends (6 Months)</h2>
+    <canvas id="subscriptionChart"></canvas>
+  </div>
+
+  <script>
+    // User Growth Chart
+    const ctx1 = document.getElementById('userGrowthChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: <%= @user_growth.map { |d| d.day.strftime("%b %d") } %>,
+        datasets: [{
+          label: 'New Users',
+          data: <%= @user_growth.map(&:count) %>,
+          borderColor: '#4F46E5',
+          tension: 0.4,
+          fill: true,
+          backgroundColor: 'rgba(79,70,229,0.1)'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: true, text: 'Daily User Growth' }
+        }
+      }
+    });
+
+    // Subscription Chart
+    const ctx2 = document.getElementById('subscriptionChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: <%= @subscription_trends.map { |d| d.week.strftime("%b %Y") } %>,
+        datasets: [{
+          label: 'New Subscriptions',
+          data: <%= @subscription_trends.map(&:count) %>,
+          backgroundColor: '#10B981'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: true, text: 'Subscription Trends by Week' }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  </script>
+</div>
+
+<style>
+.admin-dashboard {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: #1F2937;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+}
+
+.metric-card h2 {
+  color: #9CA3AF;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.metric-card .number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 0.5rem;
+}
+
+.metric-card .trend {
+  color: #6EE7B7;
+  font-size: 0.9rem;
+}
+
+.charts-section {
+  background: #111827;
+  padding: 2rem;
+  border-radius: 1rem;
+  margin-top: 2rem;
+}
+
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+</style>

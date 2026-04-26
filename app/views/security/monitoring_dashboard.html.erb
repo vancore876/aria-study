@@ -1,0 +1,124 @@
+<div class="realtime-security-dashboard">
+  <h1>Real-Time Security Monitoring</h1>
+
+  <div class="dashboard-widgets">
+    <div class="widget critical-events">
+      <h2>🚨 Critical Events</h2>
+      <div id="event-stream" class="event-list">
+        <!-- Events will appear here -->
+      </div>
+    </div>
+
+    <div class="widget stats">
+      <h2>Security Statistics</h2>
+      <div class="stat-card">
+        <h3>Failed Logins</h3>
+        <p id="failed-login-count"><%= Security::Monitor.recent_events.failed_attempts.count %></p>
+      </div>
+      <div class="stat-card">
+        <h3>MFA Attempts</h3>
+        <p id="mfa-attempt-count"><%= Security::Monitor.recent_events.mfa_events.count %></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const eventStream = document.getElementById('event-stream');
+    let failedLoginCounter = document.getElementById('failed-login-count');
+    let mfaCounter = document.getElementById('mfa-attempt-count');
+
+    const cable = ActionCable.createConsumer();
+    const channel = cable.subscriptions.create(
+      { channel: "SecurityDashboardChannel", user_id: <%= current_user.id %> },
+      {
+        received(data) {
+          const eventItem = document.createElement('div');
+          eventItem.className = `event-item ${data.event_type}`;
+          eventItem.innerHTML = `
+            <span class="timestamp">${data.timestamp.toLocaleTimeString()}</span>
+            <span class="event-type">${data.event_type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</span>
+            <span class="location">from ${data.ip}</span>
+            <span class="device">[${data.device || 'Unknown'}]</span>
+          `;
+          eventStream.prepend(eventItem);
+          
+          // Update counters
+          if (data.event_type === 'failed_login') {
+            failedLoginCounter.textContent = parseInt(failedLoginCounter.textContent) + 1;
+          } else if (data.event_type === 'mfa_event') {
+            mfaCounter.textContent = parseInt(mfaCounter.textContent) + 1;
+          }
+        }
+      }
+    );
+
+    // Poll for initial data
+    fetch('/security/monitoring_stats')
+      .then(response => response.json())
+      .then(data => {
+        failedLoginCounter.textContent = data.failed_logins;
+        mfaCounter.textContent = data.mfa_attempts;
+      });
+  </script>
+
+  <style>
+    .realtime-security-dashboard {
+      padding: 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .dashboard-widgets {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .widget {
+      background: #111827;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border: 1px solid #1F2937;
+    }
+
+    .event-list {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #0F172A;
+      border-radius: 0.5rem;
+    }
+
+    .event-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      background: #1F2937;
+      border-radius: 0.375rem;
+    }
+
+    .event-item.failed_login .event-type {
+      color: #EF4444;
+    }
+
+    .event-item.mfa_event .event-type {
+      color: #3B82F6;
+    }
+
+    .stat-card {
+      background: #1F2937;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0.5rem;
+    }
+
+    .stat-card h3 {
+      margin-bottom: 0.5rem;
+      color: #D1D5DB;
+    }
+  </style>
+</div>

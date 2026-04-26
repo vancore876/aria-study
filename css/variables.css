@@ -1,0 +1,12 @@
+:root {
+  --spacing: 1.5rem;
+  --radius: 12px;
+  --transition: all 0.3s ease;
+  --font-size-base: 1rem;
+  --font-size-large: 1.5rem;
+  --font-size-xl: 2rem;
+  --font-size-xxl: 3rem;
+  --max-width: 1200px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.05);
+  --shadow-hover: 0 4px 20px rgba(0,0,0,0.1);
+}

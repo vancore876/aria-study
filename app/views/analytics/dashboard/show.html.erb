@@ -1,0 +1,143 @@
+<div class="analytics-dashboard">
+  <h1>User Analytics Dashboard</h1>
+
+  <div class="activity-overview">
+    <div class="activity-card">
+      <h2>User Activity (30 Days)</h2>
+      <canvas id="activityChart"></canvas>
+      <p class="summary">Recent activity shows <strong><%= @user_activity.count %></strong> interactions across <%= @user_activity.map { |d| d.properties["page_url"] }.uniq.count %> pages.</p>
+    </div>
+
+    <div class="activity-card">
+      <h2>Payment Events</h2>
+      <table class="event-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Method</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% AnalyticsEvent.payment_events.limit(10).each do |event| %>
+            <tr>
+              <td><%= event.created_at.strftime("%b %d") %></td>
+              <td>$<%= (event.properties["amount"] / 100.0).round(2) %></td>
+              <td><span class="status <%= event.properties["status"] %>"><%= event.properties["status"].titleize %></span></td>
+              <td><%= event.properties["payment_method"].titleize %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="activity-card">
+      <h2>Security Events</h2>
+      <div class="event-list">
+        <% AnalyticsEvent.auth_events.order(created_at: :desc).limit(15).each do |event| %>
+          <div class="event-item">
+            <span class="timestamp"><%= event.created_at.strftime("%H:%M %b %d") %></span>
+            <span class="action"><%= event.event_type.split("_").map(&:capitalize).join(" ") %></span>
+            <span class="location">from <strong><%= event.ip_address %></strong></span>
+            <% if event.properties["device_type"] %>
+              <span class="device">[<%= event.properties["device_type"] %>] </span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('activityChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: <%= @user_activity.map { |d| d.created_at.strftime("%b %d") } %>,
+        datasets: [{
+          label: 'User Actions',
+          data: <%= @user_activity.map { |d| d.properties["event_duration"] || 0 } %>,
+          backgroundColor: '#3B82F6'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: true, text: 'User Activity Duration (seconds)' }
+        }
+      }
+    });
+  </script>
+
+  <style>
+    .analytics-dashboard {
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .activity-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .activity-card {
+      background: #111827;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border: 1px solid #1F2937;
+    }
+
+    .event-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .event-table th, .event-table td {
+      border: 1px solid #374151;
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    .event-table th {
+      background-color: #1F2937;
+      color: #D1D5DB;
+    }
+
+    .status {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+    }
+
+    .status.success { background-color: #10B981; color: white; }
+    .status.failed { background-color: #EF4444; color: white; }
+
+    .event-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #0F172A;
+      border-radius: 0.5rem;
+    }
+
+    .event-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      background: #1F2937;
+      border-radius: 0.375rem;
+    }
+
+    .timestamp { color: #64748b; }
+    .action { font-weight: 600; color: #F87171; }
+    .device { color: #3B82F6; }
+  </style>
+</div>

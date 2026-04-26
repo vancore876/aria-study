@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Expo: Start Metro",
+      "type": "npm",
+      "script": "start",
+      "problemMatcher": [],
+      "group": "build",
+      "detail": "Runs `npm start` (Metro bundler)."
+    },
+    {
+      "label": "Expo: Run Android",
+      "type": "npm",
+      "script": "android",
+      "problemMatcher": [],
+      "group": "test",
+      "detail": "Runs `npm run android` – builds the native project and launches the dev client on a connected device or emulator."
+    },
+    {
+      "label": "Expo: Pre‑build (clean)",
+      "type": "npm",
+      "script": "prebuild:clean",
+      "problemMatcher": [],
+      "group": "build",
+      "detail": "Generates native Android/iOS projects (used after SDK changes)."
+    },
+    {
+      "label": "Gemini: Run CLI Command",
+      "type": "shell",
+      "command": "gemini",
+      "args": ["--help"],
+      "problemMatcher": [],
+      "group": "none",
+      "detail": "Shortcut to run any Gemini CLI command – edit the args array as needed."
+    }
+  ]
+}

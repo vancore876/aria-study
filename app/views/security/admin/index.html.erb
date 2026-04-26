@@ -1,0 +1,92 @@
+<div class="security-audit">
+  <h1>Security Audit Logs</h1>
+
+  <div class="search-bar">
+    <form class="search-form">
+      <input type="text" name="ip" placeholder="Search by IP address..." class="ip-search" />
+      <input type="number" name="user_id" placeholder="Search by user ID..." class="user-search" />
+      <button type="submit">Search</button>
+    </form>
+  </div>
+
+  <div class="audit-logs">
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>User</th>
+          <th>Action</th>
+          <th>IP Address</th>
+          <th>Device</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @audits.each do |audit| %>
+          <tr>
+            <td><%= audit.created_at.strftime("%b %d %H:%M") %></td>
+            <td><%= audit.user.email %></td>
+            <td><%= audit.action.humanize %></td>
+            <td><%= audit.ip_address %></td>
+            <td><%= audit.device_type || "Unknown" %></td>
+            <td><%= audit.location || "N/A" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <style>
+    .security-audit {
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      background: #111827;
+      padding: 1rem;
+      border-radius: 1rem;
+    }
+
+    .search-form input {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      width: 200px;
+    }
+
+    .search-form button {
+      padding: 0.5rem 1.5rem;
+      background-color: #3B82F6;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+
+    .audit-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .audit-table th, .audit-table td {
+      border: 1px solid #374151;
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    .audit-table th {
+      background-color: #1F2937;
+      color: #D1D5DB;
+    }
+
+    .audit-table tr:nth-child(even) {
+      background-color: #0F172A;
+    }
+  </style>
+</div>

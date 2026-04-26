@@ -1,0 +1,84 @@
+<div class="payment-reconciliation">
+  <h1>Payment Reconciliation Dashboard</h1>
+
+  <div class="filters">
+    <form class="date-range-form">
+      <label>Start Date:
+        <input type="date" name="start_date" />
+      </label>
+      <label>End Date:
+        <input type="date" name="end_date" />
+      </label>
+      <button type="submit">Generate Report</button>
+    </form>
+  </div>
+
+  <div class="issue-list">
+    <h2>Unresolved Discrepancies</h2>
+    <table class="reconciliation-table">
+      <thead>
+        <tr>
+          <th>Payment ID</th>
+          <th>Amount</th>
+          <th>Discrepancy</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @unresolved.each do |issue| %>
+          <tr>
+            <td><%= issue.payment_transaction.id %></td>
+            <td>$<%= issue.payment_transaction.amount %></td>
+            <td>$<%= issue.amount_discrepancy %></td>
+            <td><span class="status pending">Pending</span></td>
+            <td>
+              <button class="resolve-btn" data-id="<%= issue.id ?>">Resolve</button>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <style>
+    .payment-reconciliation {
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .reconciliation-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .reconciliation-table th, .reconciliation-table td {
+      border: 1px solid #374151;
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    .reconciliation-table th {
+      background-color: #1F2937;
+      color: #D1D5DB;
+    }
+
+    .status.pending {
+      background-color: #F59E0B;
+      color: #111827;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+    }
+
+    .resolve-btn {
+      padding: 0.5rem 1rem;
+      background-color: #3B82F6;
+      color: white;
+      border: none;
+      border-radius: 0.375rem;
+      cursor: pointer;
+    }
+  </style>
+</div>

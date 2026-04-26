@@ -1,0 +1,136 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Clash Display', sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #162447 100%);
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #121221;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #6cd4fd;
+}
+
+.nav-links a {
+  margin-left: 1.5rem;
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #6cd4fd;
+}
+
+/* Chat container styles */
+.chat-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: #1e1e3f;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.chat-header h2 {
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
+.chat-buttons .chat-btn {
+  padding: 0.35rem 0.7rem;
+  background: #6cd4fd;
+  border: none;
+  border-radius: 6px;
+  color: #121221;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.75rem;
+  margin-right: 0.3rem;
+}
+
+.chat-buttons .chat-btn:hover {
+  transform: scale(1.03);
+  background: #45b7d1;
+}
+
+.chat-window {
+  height: 400px;
+  background: #121221;
+  border-radius: 12px;
+  padding: 1rem;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.input-area {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.input-area textarea {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  background: #2a2a40;
+  color: #ffffff;
+  resize: none;
+  font-size: 1rem;
+}
+
+.send-btn {
+  padding: 0.75rem 1.5rem;
+  background: #6cd4fd;
+  border: none;
+  border-radius: 8px;
+  color: #121221;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.send-btn:hover {
+  background: #45b7d1;
+  transform: scale(1.05);
+}
+
+/* Footer styles */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: #121221;
+  margin-top: auto;
+  color: #ffffff;
+  font-size: 0.9rem;
+}
