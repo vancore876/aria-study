@@ -6,8 +6,7 @@
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "doctor": "react-native doctor",
-    "postinstall": "npx jetify"
+    "doctor": "react-native doctor"
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
